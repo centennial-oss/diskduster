@@ -1,0 +1,402 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D31B3AD1257C4C330015FEAC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D31B3AD0257C4C330015FEAC /* ContentView.swift */; };
+		D31B3AD3257C4C330015FEAC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D31B3AD2257C4C330015FEAC /* Assets.xcassets */; };
+		D31B3AD6257C4C330015FEAC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D31B3AD5257C4C330015FEAC /* Preview Assets.xcassets */; };
+		D3B1587F257C6F3A0043A115 /* ScanLocations.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B1587E257C6F3A0043A115 /* ScanLocations.swift */; };
+		D3B15882257C7ED70043A115 /* PathScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B15881257C7ED70043A115 /* PathScanner.swift */; };
+		D3B1588C257D90990043A115 /* FilePickerGrantPrivs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B1588B257D90990043A115 /* FilePickerGrantPrivs.swift */; };
+		D3D630F8258CE7A7000858AC /* DiskDusterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D630F7258CE7A7000858AC /* DiskDusterApp.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		D31B3ACB257C4C330015FEAC /* DiskDuster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DiskDuster.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D31B3AD0257C4C330015FEAC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D31B3AD2257C4C330015FEAC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D31B3AD5257C4C330015FEAC /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		D31B3ADA257C4C330015FEAC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D31B3ADB257C4C330015FEAC /* DiskDuster.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DiskDuster.entitlements; sourceTree = "<group>"; };
+		D3B1587E257C6F3A0043A115 /* ScanLocations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanLocations.swift; sourceTree = "<group>"; };
+		D3B15881257C7ED70043A115 /* PathScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathScanner.swift; sourceTree = "<group>"; };
+		D3B1588B257D90990043A115 /* FilePickerGrantPrivs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePickerGrantPrivs.swift; sourceTree = "<group>"; };
+		D3D630F7258CE7A7000858AC /* DiskDusterApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskDusterApp.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D31B3AC8257C4C330015FEAC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D31B3AC2257C4C330015FEAC = {
+			isa = PBXGroup;
+			children = (
+				D31B3ACD257C4C330015FEAC /* DiskDuster */,
+				D3307114258CE127004773FC /* macOS */,
+				D31B3ACC257C4C330015FEAC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D31B3ACC257C4C330015FEAC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D31B3ACB257C4C330015FEAC /* DiskDuster.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D31B3ACD257C4C330015FEAC /* DiskDuster */ = {
+			isa = PBXGroup;
+			children = (
+				D3D630F4258CE776000858AC /* Interfacing */,
+				D3307113258CE0F3004773FC /* Resources */,
+				D3307111258CE0C9004773FC /* Models */,
+				D3307110258CE0C4004773FC /* Views */,
+				D31B3AD2257C4C330015FEAC /* Assets.xcassets */,
+				D31B3ADA257C4C330015FEAC /* Info.plist */,
+				D31B3AD4257C4C330015FEAC /* Preview Content */,
+				D3D630F7258CE7A7000858AC /* DiskDusterApp.swift */,
+			);
+			path = DiskDuster;
+			sourceTree = "<group>";
+		};
+		D31B3AD4257C4C330015FEAC /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				D31B3AD5257C4C330015FEAC /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		D3307110258CE0C4004773FC /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D3307111258CE0C9004773FC /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D3307113258CE0F3004773FC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		D3307114258CE127004773FC /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				D31B3ADB257C4C330015FEAC /* DiskDuster.entitlements */,
+				D31B3AD0257C4C330015FEAC /* ContentView.swift */,
+			);
+			path = macOS;
+			sourceTree = "<group>";
+		};
+		D3D630F4258CE776000858AC /* Interfacing */ = {
+			isa = PBXGroup;
+			children = (
+				D3D630F5258CE77F000858AC /* files */,
+			);
+			path = Interfacing;
+			sourceTree = "<group>";
+		};
+		D3D630F5258CE77F000858AC /* files */ = {
+			isa = PBXGroup;
+			children = (
+				D3B1587E257C6F3A0043A115 /* ScanLocations.swift */,
+				D3B15881257C7ED70043A115 /* PathScanner.swift */,
+				D3B1588B257D90990043A115 /* FilePickerGrantPrivs.swift */,
+			);
+			path = files;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D31B3ACA257C4C330015FEAC /* DiskDuster */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D31B3ADE257C4C330015FEAC /* Build configuration list for PBXNativeTarget "DiskDuster" */;
+			buildPhases = (
+				D31B3AC7257C4C330015FEAC /* Sources */,
+				D31B3AC8257C4C330015FEAC /* Frameworks */,
+				D31B3AC9257C4C330015FEAC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DiskDuster;
+			productName = DiskDuster;
+			productReference = D31B3ACB257C4C330015FEAC /* DiskDuster.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D31B3AC3257C4C330015FEAC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1220;
+				LastUpgradeCheck = 1230;
+				TargetAttributes = {
+					D31B3ACA257C4C330015FEAC = {
+						CreatedOnToolsVersion = 12.2;
+					};
+				};
+			};
+			buildConfigurationList = D31B3AC6257C4C330015FEAC /* Build configuration list for PBXProject "DiskDuster" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D31B3AC2257C4C330015FEAC;
+			productRefGroup = D31B3ACC257C4C330015FEAC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D31B3ACA257C4C330015FEAC /* DiskDuster */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D31B3AC9257C4C330015FEAC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D31B3AD6257C4C330015FEAC /* Preview Assets.xcassets in Resources */,
+				D31B3AD3257C4C330015FEAC /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D31B3AC7257C4C330015FEAC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D3B1587F257C6F3A0043A115 /* ScanLocations.swift in Sources */,
+				D31B3AD1257C4C330015FEAC /* ContentView.swift in Sources */,
+				D3B15882257C7ED70043A115 /* PathScanner.swift in Sources */,
+				D3D630F8258CE7A7000858AC /* DiskDusterApp.swift in Sources */,
+				D3B1588C257D90990043A115 /* FilePickerGrantPrivs.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		D31B3ADC257C4C330015FEAC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = "";
+			};
+			name = Debug;
+		};
+		D31B3ADD257C4C330015FEAC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = "";
+			};
+			name = Release;
+		};
+		D31B3ADF257C4C330015FEAC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = macOS/DiskDuster.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"DiskDuster/Preview Content\"";
+				DEVELOPMENT_TEAM = 86G4NP75W9;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = DiskDuster/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.ossprime.DiskDuster;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D31B3AE0257C4C330015FEAC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = macOS/DiskDuster.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"DiskDuster/Preview Content\"";
+				DEVELOPMENT_TEAM = 86G4NP75W9;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = DiskDuster/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.ossprime.DiskDuster;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D31B3AC6257C4C330015FEAC /* Build configuration list for PBXProject "DiskDuster" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D31B3ADC257C4C330015FEAC /* Debug */,
+				D31B3ADD257C4C330015FEAC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D31B3ADE257C4C330015FEAC /* Build configuration list for PBXNativeTarget "DiskDuster" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D31B3ADF257C4C330015FEAC /* Debug */,
+				D31B3AE0257C4C330015FEAC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D31B3AC3257C4C330015FEAC /* Project object */;
+}
