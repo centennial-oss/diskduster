@@ -1,0 +1,55 @@
+# SwiftLint: https://github.com/realm/SwiftLint
+# Run `make lint` (requires SwiftLint: `brew install swiftlint`).
+# `make lint` passes `--strict` so warnings fail CI (avoid `swiftlint --fix` without review).
+
+included:
+  - DiskDuster
+  - DiskDusterTests
+
+excluded:
+  - build
+  - dist
+  - .build
+
+identifier_name:
+  min_length: 3
+  excluded:
+    - id
+    - url
+
+opt_in_rules:
+  - closure_spacing
+  - empty_count
+  - empty_string
+  - explicit_init
+  - fatal_error_message
+  - first_where
+  - identical_operands
+  - operator_usage_whitespace
+  - redundant_nil_coalescing
+  - sorted_first_last
+  - toggle_bool
+  - unneeded_parentheses_in_closure_argument
+  - yoda_condition
+
+line_length:
+  warning: 120
+  error: 120
+  ignores_urls: true
+  ignores_comments: true
+
+file_length:
+  warning: 400
+  error: 400
+
+function_body_length:
+  warning: 150
+  error: 150
+
+type_body_length:
+  warning: 400
+  error: 400
+
+cyclomatic_complexity:
+  warning: 15
+  error: 25
