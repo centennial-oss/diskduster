@@ -30,3 +30,5 @@ We may update this policy occasionally, but will never snoop on you or collect a
 ## Contact
 
 Questions? Open an issue at [github.com/centennial-oss/diskduster/issues](https://github.com/centennial-oss/diskduster/issues).
+
+For more info, see [centennialoss.org/privacy](https://centennialoss.org/privacy/).

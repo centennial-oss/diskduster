@@ -1,4 +1,4 @@
-# DiskDuster™
+# <img src="assets/app-icon.png" alt="DiskDuster" height="48" /> DiskDuster™
 
 Dust off your Mac's drive and reclaim space.
 
@@ -43,7 +43,7 @@ macOS hides app containers and the Trash from apps that don't have Full Disk Acc
 
 ## Privacy
 
-DiskDuster does not collect, send, or share your data. It contains no trackers or analytics and makes no network connections. Read more in our full [Privacy Policy](./PRIVACY.md).
+DiskDuster does not collect, send, or share your data. It contains no trackers or analytics and makes no network connections. Read more in our full [Privacy Policy](./PRIVACY.md), and see [centennialoss.org/privacy](https://centennialoss.org/privacy/) for more info.
 
 ## Requirements
 
@@ -96,4 +96,4 @@ While we welcome Pull Requests and other contributions from other humans (includ
 
 DiskDuster and its logo are trademarks of Centennial OSS Inc.
 Use of the name and branding is not permitted for modified versions or forks without permission.
-See TRADEMARKS.md for details.
+See [TRADEMARKS.md](./TRADEMARKS.md) for details.
