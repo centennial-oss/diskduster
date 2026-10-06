@@ -31,7 +31,7 @@ struct DiskUsageView: View {
                             + "\(ByteFormat.string(breakdown.reserved)) automatically when apps need it.")
                 }
                 CapacityBar(segments: [
-                    .init(color: .accentColor, fraction: breakdown.fraction(breakdown.inUse)),
+                    .init(color: .blue, fraction: breakdown.fraction(breakdown.inUse)),
                     .init(color: .red, fraction: breakdown.fraction(breakdown.fullySelected)),
                     .init(color: .orange, fraction: breakdown.fraction(breakdown.partlySelected)),
                     .init(color: .purple, fraction: breakdown.fraction(breakdown.reserved))
@@ -43,7 +43,7 @@ struct DiskUsageView: View {
 
     private func legend(_ breakdown: CapacityBreakdown) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            LegendRow(symbol: "circle.fill", color: .accentColor,
+            LegendRow(symbol: "circle.fill", color: .blue,
                       text: "\(ByteFormat.string(breakdown.inUse)) in use")
             if breakdown.fullySelected > 0 {
                 LegendRow(symbol: "trash.fill", color: .red,

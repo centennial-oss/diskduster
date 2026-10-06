@@ -1,4 +1,4 @@
-.PHONY: build build-macos build-release-unsigned build-run-macos clean lint lint-fix-safe reset-defaults reset-perms run-macos test
+.PHONY: build build-macos build-release-unsigned build-run-macos clean generate-appicons lint lint-fix-safe reset-defaults reset-perms run-macos test
 
 # SwiftLint: https://github.com/realm/SwiftLint - `brew install swiftlint`
 SWIFTLINT ?= $(shell command -v swiftlint 2>/dev/null)
@@ -9,6 +9,24 @@ APP_NAME := DiskDuster
 BUNDLE_ID ?= org.centennialoss.diskduster
 DERIVED_DATA := build/DerivedData
 DIST_DERIVED_DATA := dist/DerivedData
+
+# App icon pipeline (same as the other Centennial OSS apps):
+#   1. Composite assets/app-icon-large-transparent.png over assets/app-icon-background-large.png
+#      -> assets/app-icon-large.png
+#   2. Resize the composite into every macOS AppIcon size. 16 and 32 are center-cropped first so the artwork
+#      stays legible at tiny sizes.
+#   3. Copy the 128x128 icon to assets/app-icon.png for the README.
+APPICON_DIR := DiskDuster/Assets.xcassets/AppIcon.appiconset
+APPICON_SRC := $(APPICON_DIR)/AppIcon_1024.png
+APPICON_SIZES := 16 32 64 128 256 512
+APPICON_BG := assets/app-icon-background-large.png
+APPICON_TRANSPARENT_SRC := assets/app-icon-large-transparent.png
+APPICON_LARGE := assets/app-icon-large.png
+APPICON_PREVIEW := assets/app-icon.png
+APPICON_CROP := build/AppIcon_crop.png
+# The duster is top-heavy (feathers up, handle down), so it sits a little below center to look balanced.
+APPICON_FG_SIZE := 860
+APPICON_FG_Y_OFFSET := -30
 
 lint:
 	@if [ -z "$(SWIFTLINT)" ]; then \
@@ -69,3 +87,27 @@ reset-perms:
 reset-defaults:
 	@defaults delete $(BUNDLE_ID) 2>/dev/null || true
 	@echo "Reset UserDefaults for $(BUNDLE_ID)"
+
+generate-appicons:
+	@test -f $(APPICON_BG) || (echo "Missing: $(APPICON_BG)" && exit 1)
+	@test -f $(APPICON_TRANSPARENT_SRC) || (echo "Missing: $(APPICON_TRANSPARENT_SRC)" && exit 1)
+	@mkdir -p build
+	@echo "Compositing $(APPICON_TRANSPARENT_SRC) onto $(APPICON_BG) -> $(APPICON_LARGE)"
+	@swift scripts/composite-app-icon.swift $(APPICON_BG) $(APPICON_TRANSPARENT_SRC) $(APPICON_LARGE) \
+		$(APPICON_FG_SIZE) $(APPICON_FG_Y_OFFSET)
+	@cp $(APPICON_LARGE) $(APPICON_SRC)
+	@for size in $(APPICON_SIZES); do \
+		echo "Creating AppIcon_$$size.png from AppIcon_1024.png"; \
+		if [ "$$size" = "16" ]; then \
+			sips --cropToHeightWidth 780 780 $(APPICON_SRC) --out $(APPICON_CROP) >/dev/null && \
+			sips -z 16 16 $(APPICON_CROP) --out $(APPICON_DIR)/AppIcon_16.png >/dev/null; \
+		elif [ "$$size" = "32" ]; then \
+			sips --cropToHeightWidth 880 880 $(APPICON_SRC) --out $(APPICON_CROP) >/dev/null && \
+			sips -z 32 32 $(APPICON_CROP) --out $(APPICON_DIR)/AppIcon_32.png >/dev/null; \
+		else \
+			sips -z $$size $$size $(APPICON_SRC) --out $(APPICON_DIR)/AppIcon_$$size.png >/dev/null; \
+		fi; \
+	done
+	@cp $(APPICON_DIR)/AppIcon_128.png $(APPICON_PREVIEW)
+	@rm -f $(APPICON_CROP)
+	@echo "Done writing AppIcons and $(APPICON_PREVIEW)"
