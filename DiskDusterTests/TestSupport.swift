@@ -72,3 +72,17 @@ final class FakePrivilegedRunner: PrivilegedRunning, @unchecked Sendable {
         return try result.get()
     }
 }
+
+/// UserDefaults kept in memory only, so settings tests never write to the real ~/Library/Preferences.
+nonisolated final class InMemoryDefaults: UserDefaults, @unchecked Sendable {
+    private var values: [String: Any] = [:]
+
+    init() {
+        super.init(suiteName: nil)!
+    }
+
+    override func object(forKey defaultName: String) -> Any? { values[defaultName] }
+    override func set(_ value: Any?, forKey defaultName: String) { values[defaultName] = value }
+    override func set(_ value: Bool, forKey defaultName: String) { values[defaultName] = value }
+    override func removeObject(forKey defaultName: String) { values[defaultName] = nil }
+}

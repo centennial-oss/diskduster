@@ -94,6 +94,7 @@ iOSInjectionProject/
 
 # Project
 dist/
+Local.xcconfig
 localdata/
 *.xcuserstate
 

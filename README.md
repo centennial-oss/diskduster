@@ -64,6 +64,16 @@ make build
 
 This lints, runs the unit tests, and builds `build/DiskDuster.app`. You can also open `DiskDuster.xcodeproj` in Xcode and run it (⌘R).
 
+The project doesn't set a development team, so Xcode signs local builds with "Sign to Run Locally" and you don't need an Apple developer account to contribute. If you'd rather sign with your own team (for example, so macOS remembers DiskDuster's Full Disk Access between builds), create an untracked `Local.xcconfig` in the repository root:
+
+```
+DEVELOPMENT_TEAM = YOURTEAMID
+```
+
+With that file in place, `make build` signs with your team too (Xcode must be signed in to that team's account so it can create a development certificate).
+
+Please don't set a team in Xcode's Signing & Capabilities tab, because that writes it into the project file.
+
 Debug builds accept launch arguments that help with testing and screenshots:
 
 ```bash

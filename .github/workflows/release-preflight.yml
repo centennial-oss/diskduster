@@ -1,0 +1,28 @@
+name: Release Preflight
+
+# Runs the full release build (test, sign, notarize, package) without creating a release. The zip, DMG and
+# checksums are uploaded as workflow artifacts so they can be downloaded and tried before tagging.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to stamp into the preflight build
+        required: false
+        type: string
+        default: 0.0.0-preflight
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    if: github.repository_owner == 'centennial-oss'
+    uses: ./.github/workflows/release-build.yml
+    secrets: inherit
+    permissions:
+      contents: write
+    with:
+      version: ${{ inputs.version }}
+      build_number: ${{ github.run_number }}
+      publish_release: false

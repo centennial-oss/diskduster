@@ -1,4 +1,4 @@
-.PHONY: build build-macos build-release-unsigned build-run-macos clean generate-appicons generate-build-info lint lint-fix-safe reset-defaults reset-perms run-macos test
+.PHONY: build build-macos build-release-unsigned build-run-macos check-no-team clean generate-appicons generate-build-info lint lint-fix-safe reset-defaults reset-perms run-macos test
 
 # SwiftLint: https://github.com/realm/SwiftLint - `brew install swiftlint`
 SWIFTLINT ?= $(shell command -v swiftlint 2>/dev/null)
@@ -9,6 +9,15 @@ APP_NAME := DiskDuster
 BUNDLE_ID ?= org.centennialoss.diskduster
 DERIVED_DATA := build/DerivedData
 DIST_DERIVED_DATA := dist/DerivedData
+
+# With an untracked Local.xcconfig that sets DEVELOPMENT_TEAM, build-macos signs the Debug app with that team, so
+# macOS keeps DiskDuster's Full Disk Access between builds. Without one (contributors, CI), it builds unsigned.
+LOCAL_XCCONFIG := Local.xcconfig
+ifneq ($(wildcard $(LOCAL_XCCONFIG)),)
+DEBUG_SIGNING := -allowProvisioningUpdates
+else
+DEBUG_SIGNING := CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+endif
 
 # App icon pipeline (same as the other Centennial OSS apps):
 #   1. Composite assets/app-icon-large-transparent.png over assets/app-icon-background-large.png
@@ -37,13 +46,30 @@ DATE ?= $(shell date -u +"%Y-%m-%dT%H:%M:%S.000Z")
 CONFIG ?= Debug
 ARCH ?= arm64
 
-# Override the version at build time (e.g. TAGVER=1.0.0 make build-release-unsigned). Writes
+# Override the version at build time (e.g. TAGVER=1.0.0 BUILDNUM=42 make build-release-unsigned). Writes
 # DiskDuster/Version.xcconfig so the app shows this version in About and Info.plist.
 TAGVER ?=
+BUILDNUM ?= 1
 VERSION_XCCONFIG := DiskDuster/Version.xcconfig
 COPYRIGHT := Copyright © 2026 Centennial OSS Inc.
 
-lint:
+# The project must not name a development team: contributors build with "Sign to Run Locally" and CI signs releases
+# with the Developer ID certificate. Maintainers set their team in the untracked Local.xcconfig instead.
+# Fails if the project file or a checked-in xcconfig sets one (Xcode's Signing & Capabilities tab adds both
+# DEVELOPMENT_TEAM and DevelopmentTeam).
+check-no-team:
+	@found=0; \
+	if grep -n -i -E 'development_?team' $(PROJECT)/project.pbxproj; then found=1; fi; \
+	for f in $$(find . -name '*.xcconfig' -not -name Local.xcconfig -not -path './build/*' -not -path './dist/*'); do \
+		if grep -n -H -E '^[[:space:]]*DEVELOPMENT_TEAM' "$$f"; then found=1; fi; \
+	done; \
+	if [ $$found -ne 0 ]; then \
+		echo "error: a development team is set above. Remove it, and put your team in Local.xcconfig instead" \
+			"(see README.md)." >&2; \
+		exit 1; \
+	fi
+
+lint: check-no-team
 	@if [ -z "$(SWIFTLINT)" ]; then \
 		echo "SwiftLint not found. Install with: brew install swiftlint" >&2; \
 		exit 1; \
@@ -73,7 +99,7 @@ build: test build-macos
 
 build-macos:
 	mkdir -p build
-	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration Debug -derivedDataPath $(DERIVED_DATA) -destination 'platform=macOS' build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration Debug -derivedDataPath $(DERIVED_DATA) -destination 'platform=macOS' build $(DEBUG_SIGNING)
 	rm -rf "build/$(APP_NAME).app"
 	cp -R "$(DERIVED_DATA)/Build/Products/Debug/$(APP_NAME).app" build/
 
@@ -87,8 +113,10 @@ build-run-macos: build-macos run-macos
 build-release-unsigned:
 	mkdir -p dist
 	@if [ -n "$(TAGVER)" ]; then \
-		printf 'MARKETING_VERSION = %s\nCURRENT_PROJECT_VERSION = 1\nINFOPLIST_KEY_NSHumanReadableCopyright = %s\n' \
-			"$(TAGVER)" "$(COPYRIGHT)" > $(VERSION_XCCONFIG); \
+		printf 'MARKETING_VERSION = %s\nCURRENT_PROJECT_VERSION = %s\nINFOPLIST_KEY_NSHumanReadableCopyright = %s\n' \
+			"$(TAGVER)" "$(BUILDNUM)" "$(COPYRIGHT)" > $(VERSION_XCCONFIG); \
+		printf '\n// Optional, untracked per-developer settings, e.g. DEVELOPMENT_TEAM = <your team ID>. See README.md.\n#include? "../Local.xcconfig"\n' \
+			>> $(VERSION_XCCONFIG); \
 	fi
 	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration Release -derivedDataPath $(DIST_DERIVED_DATA) -destination 'generic/platform=macOS' build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
 	rm -rf "dist/$(APP_NAME).app"

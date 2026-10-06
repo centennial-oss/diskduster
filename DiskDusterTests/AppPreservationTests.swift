@@ -34,9 +34,7 @@ struct AppPreservationTests {
     }
 
     @Test func preservedAppsAreNeverSelected() throws {
-        let suite = "DiskDusterTests-\(UUID().uuidString)"
-        let defaults = try #require(UserDefaults(suiteName: suite))
-        defer { defaults.removePersistentDomain(forName: suite) }
+        let defaults = InMemoryDefaults()
         let model = AppModel(settings: AppSettings(defaults: defaults))
         let chatCache = item("~/Library/Caches/com.openai.chat", .userCaches, app: chat)
         let chatLogs = item("~/Library/Logs/ChatGPT", .logs, app: chat)

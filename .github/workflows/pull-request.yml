@@ -1,0 +1,39 @@
+name: Pull Request
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    if: github.repository_owner == 'centennial-oss'
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 'latest-stable'
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Generate build info for CI
+        run: |
+          COMMIT="${{ github.sha }}" \
+          DATE="$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")" \
+          CONFIG="Debug" \
+          ARCH="arm64" \
+          make generate-build-info
+
+      # `make build` lints, runs the unit tests and builds the Debug app.
+      - name: Run clean, build
+        run: make clean build
