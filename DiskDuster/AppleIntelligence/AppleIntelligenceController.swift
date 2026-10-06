@@ -64,7 +64,8 @@ final class AppleIntelligenceController {
                 do {
                     try presentProfile(disabling: features)
                 } catch {
-                    finish(AIRunReport(outcome: .failed("The profile couldn't be created. \(error.localizedDescription)")))
+                    let reason = "The profile couldn't be created. \(error.localizedDescription)"
+                    finish(AIRunReport(outcome: .failed(reason)))
                     return
                 }
                 step = .waitingForInstall

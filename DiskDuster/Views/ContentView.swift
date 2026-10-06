@@ -10,10 +10,12 @@ enum SidebarItem: Hashable {
     case overview
     case apps
     case category(CleanupCategory)
+    case appleIntelligence
 }
 
 struct ContentView: View {
     @Environment(AppModel.self) private var model
+    @Environment(AppleIntelligenceController.self) private var intelligence
     @State private var sidebarSelection: SidebarItem? = .overview
 
     var body: some View {
@@ -34,6 +36,7 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             if !model.isBusy { model.refreshSystemState() }
         }
+        .task { intelligence.refresh() }
         #if DEBUG
         .task { applyDebugLaunchArguments() }
         #endif
@@ -41,19 +44,33 @@ struct ContentView: View {
 
     #if DEBUG
     /// Debug-only hooks for screenshots and manual testing, e.g.
-    /// `open DiskDuster.app --args -DDAutoScan YES -DDSidebar userCaches`.
+    /// `open DiskDuster.app --args -DDAutoScan YES -DDSidebar userCaches` (or `apps`, `appleIntelligence`).
     private func applyDebugLaunchArguments() {
         let defaults = UserDefaults.standard
         if let raw = defaults.string(forKey: "DDSidebar") {
-            sidebarSelection = raw == "apps" ? .apps : CleanupCategory(rawValue: raw).map { .category($0) }
+            switch raw {
+            case "apps": sidebarSelection = .apps
+            case "appleIntelligence": sidebarSelection = .appleIntelligence
+            default: sidebarSelection = CleanupCategory(rawValue: raw).map { .category($0) }
+            }
         }
         if defaults.bool(forKey: "DDAutoScan") { model.startScan() }
+        // Opens the confirmation sheet once the scan finishes. It never cleans by itself.
+        if defaults.bool(forKey: "DDShowConfirm") {
+            Task {
+                while model.phase != .ready { try? await Task.sleep(for: .seconds(1)) }
+                model.requestClean()
+            }
+        }
     }
     #endif
 
     @ViewBuilder
     private var detail: some View {
         switch model.phase {
+        case .idle where sidebarSelection == .appleIntelligence:
+            // Apple Intelligence doesn't depend on a scan, so it's available right away.
+            AppleIntelligenceView()
         case .idle:
             WelcomeView()
         case .scanning(let progress):
@@ -71,6 +88,8 @@ struct ContentView: View {
                 CategoryDetailView(category: category)
             case .apps:
                 AppsView()
+            case .appleIntelligence:
+                AppleIntelligenceView()
             case .overview, nil:
                 OverviewView { sidebarSelection = .category($0) }
             }
@@ -110,6 +129,7 @@ struct ContentView: View {
 
 struct SidebarView: View {
     @Environment(AppModel.self) private var model
+    @Environment(AppleIntelligenceController.self) private var intelligence
     @Binding var selection: SidebarItem?
 
     var body: some View {
@@ -145,6 +165,19 @@ struct SidebarView: View {
                     .help(hasResults ? selectionHelp(for: category) : "Scan to see what's here")
                     .tag(SidebarItem.category(category))
                     .selectionDisabled(!hasResults)
+                }
+            }
+            if intelligence.isPlatformSupported {
+                Section("Tools") {
+                    HStack {
+                        Label("Apple Intelligence", systemImage: "apple.intelligence")
+                        Spacer()
+                        Text(intelligence.snapshot?.totalModelBytes.map { ByteFormat.string($0) } ?? "")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                    }
+                    .tag(SidebarItem.appleIntelligence)
                 }
             }
         }

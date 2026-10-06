@@ -32,15 +32,12 @@ struct WelcomeView: View {
                     .frame(maxWidth: 520)
 
                 VStack(spacing: 12) {
-                    Button {
+                    BasicButton(
+                        "Scan My Mac", systemImage: "magnifyingglass", size: .extraLarge,
+                        keyboardShortcut: .defaultAction
+                    ) {
                         model.startScan()
-                    } label: {
-                        Text("Scan My Mac")
-                            .padding(.horizontal, 18)
                     }
-                    .buttonStyle(.glassProminent)
-                    .controlSize(.extraLarge)
-                    .keyboardShortcut(.defaultAction)
 
                     Toggle("Include system locations", isOn: $settings.includeSystemLocations)
                         .toggleStyle(.roundedCheckbox)

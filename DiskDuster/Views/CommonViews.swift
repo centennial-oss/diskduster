@@ -53,14 +53,8 @@ struct ProgressPanel: View {
                 .truncationMode(.middle)
                 .frame(maxWidth: 600)
             if let onCancel {
-                Button(action: onCancel) {
-                    Text("Cancel")
-                        .padding(.horizontal, 14)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .keyboardShortcut(.cancelAction)
-                .padding(.top, 6)
+                BasicButton("Cancel", keyboardShortcut: .cancelAction, action: onCancel)
+                    .padding(.top, 6)
             }
         }
         .padding(40)
@@ -88,9 +82,9 @@ struct FullDiskAccessCard: View {
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-                HStack {
-                    Button("Open Privacy Settings") { model.openFullDiskAccessSettings() }
-                    Button("Check Again") { model.refreshSystemState() }
+                HStack(spacing: 10) {
+                    BasicButton("Open Privacy Settings", size: .regular) { model.openFullDiskAccessSettings() }
+                    BasicButton("Check Again", prominence: .secondary, size: .regular) { model.refreshSystemState() }
                 }
                 .padding(.top, 4)
             }
@@ -121,7 +115,8 @@ struct DiskUsageView: View {
     }
 }
 
-/// A segmented control drawn with Liquid Glass: each option is a glass capsule, and the chosen one is tinted.
+/// A scope picker in the style of Apple Music's search scopes: one Liquid Glass capsule holding plain-text
+/// options, with a softer capsule that slides behind the chosen one.
 struct GlassSegmentedControl<Value: Hashable & Sendable>: View {
     struct Option: Identifiable {
         let value: Value
@@ -131,31 +126,39 @@ struct GlassSegmentedControl<Value: Hashable & Sendable>: View {
 
     @Binding var selection: Value
     let options: [Option]
-    @Namespace private var glassNamespace
+    @Namespace private var highlightNamespace
 
     var body: some View {
-        GlassEffectContainer(spacing: 6) {
-            HStack(spacing: 6) {
-                ForEach(options) { option in
-                    if option.value == selection {
-                        segment(option).buttonStyle(.glassProminent)
-                    } else {
-                        segment(option).buttonStyle(.glass)
-                    }
-                }
+        HStack(spacing: 2) {
+            ForEach(options) { option in
+                segment(option)
             }
         }
+        .padding(4)
+        .glassEffect(.regular, in: .capsule)
         .accessibilityElement(children: .contain)
     }
 
     private func segment(_ option: Option) -> some View {
-        Button {
+        let isSelected = option.value == selection
+        return Button {
             withAnimation(.smooth(duration: 0.25)) { selection = option.value }
         } label: {
             Text(option.title)
-                .padding(.horizontal, 4)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(.primary)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 6)
+                .background {
+                    if isSelected {
+                        Capsule()
+                            .fill(Color.primary.opacity(0.12))
+                            .matchedGeometryEffect(id: "highlight", in: highlightNamespace)
+                    }
+                }
+                .contentShape(.capsule)
         }
-        .glassEffectID(option.id, in: glassNamespace)
-        .accessibilityAddTraits(option.value == selection ? .isSelected : [])
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }

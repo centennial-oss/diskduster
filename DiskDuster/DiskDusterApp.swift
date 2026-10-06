@@ -10,6 +10,7 @@ import SwiftUI
 struct DiskDusterApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var model: AppModel
+    @State private var intelligence = AppleIntelligenceController()
 
     init() {
         _model = State(initialValue: AppModel(settings: AppSettings()))
@@ -20,6 +21,7 @@ struct DiskDusterApp: App {
             ContentView()
                 .environment(model)
                 .environment(model.settings)
+                .environment(intelligence)
                 .frame(minWidth: 900, minHeight: 580)
         }
         .commands {

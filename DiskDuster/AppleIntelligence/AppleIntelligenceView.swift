@@ -71,7 +71,7 @@ struct AppleIntelligenceView: View {
                     .font(.title2.weight(.semibold))
                     .monospacedDigit()
                 Text("models on disk")
-                    .font(.caption)
+                    .font(.callout)
                     .foregroundStyle(.secondary)
             }
         }
@@ -84,8 +84,10 @@ struct AppleIntelligenceView: View {
                 .foregroundStyle(.green)
             Text("DiskDuster is keeping \(count) \(count == 1 ? "feature" : "features") turned off.")
             Spacer()
-            Button("Turn Everything Back On…") { controller.restore() }
-                .disabled(controller.isBusy)
+            BasicButton("Turn Everything Back On…", prominence: .secondary, size: .regular) {
+                controller.restore()
+            }
+            .disabled(controller.isBusy)
         }
         .padding(14)
         .glassEffect(.regular, in: .rect(cornerRadius: 14))
@@ -96,10 +98,11 @@ struct AppleIntelligenceView: View {
             HStack {
                 Text("Features to Turn Off").font(.title3.weight(.semibold))
                 Spacer()
-                Button("All") { controller.selection = Set(AIFeature.allCases) }
-                Button("None") { controller.selection = [] }
+                BasicButton("All", prominence: .secondary, size: .small) {
+                    controller.selection = Set(AIFeature.allCases)
+                }
+                BasicButton("None", prominence: .secondary, size: .small) { controller.selection = [] }
             }
-            .buttonStyle(.borderless)
             VStack(spacing: 0) {
                 ForEach(AIFeature.allCases) { feature in
                     featureRow(feature, state: snapshot.states[feature] ?? .unknown)
@@ -119,8 +122,7 @@ struct AppleIntelligenceView: View {
                     if isOn { controller.selection.insert(feature) } else { controller.selection.remove(feature) }
                 }
             )) { EmptyView() }
-                .toggleStyle(.checkbox)
-                .labelsHidden()
+                .toggleStyle(.roundedCheckbox)
             Image(systemName: feature.symbol)
                 .foregroundStyle(.tint)
                 .frame(width: 20)
@@ -141,10 +143,11 @@ struct AppleIntelligenceView: View {
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(pack.title)
-                            Text(removing.contains(pack) ? "Will be removed" : keptReason(pack))
-                                .font(.caption)
-                                .foregroundStyle(removing.contains(pack) ? AnyShapeStyle(.orange)
-                                                                         : AnyShapeStyle(.secondary))
+                            let status = packStatus(pack, bytes: snapshot.packBytes[pack], removing: removing)
+                            Text(status.text)
+                                .font(.callout)
+                                .foregroundStyle(status.highlighted ? AnyShapeStyle(.orange)
+                                                                    : AnyShapeStyle(.secondary))
                         }
                         Spacer()
                         Text(sizeText(snapshot.packBytes[pack]))
@@ -159,6 +162,12 @@ struct AppleIntelligenceView: View {
             .padding(.vertical, 6)
             .glassEffect(.regular, in: .rect(cornerRadius: 14))
         }
+    }
+
+    private func packStatus(_ pack: AIModelPack, bytes: Int64?, removing: Set<AIModelPack>)
+        -> (text: String, highlighted: Bool) {
+        if bytes == 0 { return ("Nothing to remove", false) }
+        return removing.contains(pack) ? ("Will be removed", true) : (keptReason(pack), false)
     }
 
     private func keptReason(_ pack: AIModelPack) -> String {
@@ -188,14 +197,8 @@ struct AppleIntelligenceView: View {
     private var actionBar: some View {
         HStack {
             Spacer()
-            Button {
-                controller.turnOff()
-            } label: {
-                Text(actionTitle).padding(.horizontal, 10)
-            }
-            .buttonStyle(.glassProminent)
-            .controlSize(.large)
-            .disabled(controller.selection.isEmpty || controller.isBusy)
+            BasicButton(actionTitle, systemImage: "apple.intelligence") { controller.turnOff() }
+                .disabled(controller.selection.isEmpty || controller.isBusy)
         }
     }
 
@@ -211,7 +214,7 @@ private struct StateBadge: View {
 
     var body: some View {
         Text(state.label)
-            .font(.caption.weight(.medium))
+            .font(.subheadline.weight(.medium))
             .padding(.horizontal, 8)
             .padding(.vertical, 3)
             .background(tint.opacity(0.18), in: .capsule)
@@ -221,7 +224,7 @@ private struct StateBadge: View {
     private var tint: Color {
         switch state {
         case .offByDiskDuster: .green
-        case .on: .orange
+        case .enabled: .orange
         case .off, .offByOtherProfile, .available, .unknown: .secondary
         }
     }

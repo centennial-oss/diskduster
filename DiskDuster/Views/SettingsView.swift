@@ -52,8 +52,9 @@ struct SettingsView: View {
                         HStack {
                             Text(name)
                             Spacer()
-                            Button("Remove") { settings.preservedApps[key] = nil }
-                                .buttonStyle(.borderless)
+                            BasicButton("Remove", prominence: .secondary, size: .small) {
+                                settings.preservedApps[key] = nil
+                            }
                         }
                     }
                 }
@@ -71,8 +72,9 @@ struct SettingsView: View {
                                 .truncationMode(.middle)
                                 .help(path)
                             Spacer()
-                            Button("Remove") { settings.unignore(path) }
-                                .buttonStyle(.borderless)
+                            BasicButton("Remove", prominence: .secondary, size: .small) {
+                                settings.unignore(path)
+                            }
                         }
                     }
                 }
@@ -83,7 +85,9 @@ struct SettingsView: View {
                     HStack {
                         Text(model.hasFullDiskAccess ? "On" : "Off")
                             .foregroundStyle(model.hasFullDiskAccess ? .green : .orange)
-                        Button("Open Settings") { model.openFullDiskAccessSettings() }
+                        BasicButton("Open Settings", prominence: .secondary, size: .small) {
+                            model.openFullDiskAccessSettings()
+                        }
                     }
                 }
             }

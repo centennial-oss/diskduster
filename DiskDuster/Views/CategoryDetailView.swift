@@ -63,7 +63,7 @@ struct CategoryDetailView: View {
             } description: {
                 Text("Rescan to include \(category.title).")
             } actions: {
-                Button("Rescan") { model.startScan() }
+                BasicButton("Rescan", size: .regular) { model.startScan() }
             }
         }
     }

@@ -12,7 +12,7 @@ nonisolated enum AIFeatureState: Sendable, Equatable {
     /// Turned off by another configuration profile, such as one from an employer or school.
     case offByOtherProfile
     case off
-    case on
+    case enabled
     /// Has no per-user switch DiskDuster can read; it works whenever Apple Intelligence is on.
     case available
     case unknown
@@ -22,7 +22,7 @@ nonisolated enum AIFeatureState: Sendable, Equatable {
         case .offByDiskDuster: "Off · DiskDuster"
         case .offByOtherProfile: "Off · Managed"
         case .off: "Off"
-        case .on: "On"
+        case .enabled: "On"
         case .available: "Available"
         case .unknown: "Unknown"
         }
@@ -89,18 +89,19 @@ nonisolated struct AISnapshot: Sendable {
         if snapshot.profileFeatures?.contains(feature) == true { return .offByDiskDuster }
         if feature.isModelOnly {
             let sizes = feature.modelPacks.map { snapshot.packBytes[$0] }
-            if sizes.contains(where: { ($0 ?? 0) > 0 }) { return .on }
+            if sizes.contains(where: { ($0 ?? 0) > 0 }) { return .enabled }
             return sizes.allSatisfy { $0 == 0 } ? .off : .unknown
         }
         if isForcedOff(feature) { return .offByOtherProfile }
         guard !feature.pinnedSettings.isEmpty else { return .available }
         let allOff = feature.pinnedSettings.allSatisfy { currentValue($0) == $0.disabledValue }
-        return allOff ? .off : .on
+        return allOff ? .off : .enabled
     }
 
     private static func isForcedOff(_ feature: AIFeature) -> Bool {
+        let restrictions = "com.apple.applicationaccess"
         let restrictionsForced = feature.restrictionKeys.allSatisfy { key in
-            isForced(domain: "com.apple.applicationaccess", key: key) && readBool("com.apple.applicationaccess", key) == false
+            isForced(domain: restrictions, key: key) && readBool(restrictions, key) == false
         }
         let settingsForced = feature.pinnedSettings.allSatisfy { setting in
             isForced(domain: setting.domain, key: setting.key) && currentValue(setting) == setting.disabledValue

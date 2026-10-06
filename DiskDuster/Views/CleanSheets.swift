@@ -56,19 +56,24 @@ struct ConfirmCleanSheet: View {
                 note("app.badge.checkmark", "For best results, quit apps you aren't using before cleaning.")
             }
 
-            HStack {
+            HStack(spacing: 12) {
                 Spacer()
-                Button("Cancel", role: .cancel) { dismiss() }
-                    .keyboardShortcut(.cancelAction)
-                Button(settings.deletionMode == .trash ? "Move to Trash" : "Delete", role: .destructive) {
+                BasicButton("Cancel", role: .cancel, prominence: .secondary, keyboardShortcut: .cancelAction) {
+                    dismiss()
+                }
+                // Moving to the Trash can be undone, so only permanent deletion gets the red destructive style.
+                BasicButton(
+                    settings.deletionMode == .trash ? "Move to Trash" : "Delete Permanently",
+                    systemImage: settings.deletionMode == .trash ? "trash" : "xmark.bin",
+                    role: settings.deletionMode == .trash ? nil : .destructive,
+                    keyboardShortcut: .defaultAction
+                ) {
                     model.performClean()
                 }
-                .buttonStyle(.borderedProminent)
-                .keyboardShortcut(.defaultAction)
             }
         }
-        .padding(24)
-        .frame(width: 500)
+        .padding(28)
+        .frame(width: 620)
     }
 
     private func note(_ symbol: String, _ text: String, warning: Bool = false) -> some View {
@@ -136,18 +141,16 @@ struct CleanReportSheet: View {
                 }
             }
 
-            HStack {
+            HStack(spacing: 12) {
                 Spacer()
-                Button("Rescan") {
+                BasicButton("Rescan", prominence: .secondary) {
                     dismiss()
                     model.startScan()
                 }
-                Button("Done") { dismiss() }
-                    .buttonStyle(.borderedProminent)
-                    .keyboardShortcut(.defaultAction)
+                BasicButton("Done", keyboardShortcut: .defaultAction) { dismiss() }
             }
         }
-        .padding(24)
-        .frame(width: 500)
+        .padding(28)
+        .frame(width: 620)
     }
 }

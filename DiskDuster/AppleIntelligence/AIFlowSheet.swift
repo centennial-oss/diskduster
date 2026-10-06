@@ -24,8 +24,8 @@ struct AIFlowSheet: View {
                 EmptyView()
             }
         }
-        .padding(24)
-        .frame(width: 520)
+        .padding(28)
+        .frame(width: 620)
     }
 
     private func installSteps(removing message: String?) -> some View {
@@ -49,13 +49,24 @@ struct AIFlowSheet: View {
                     ProgressView().controlSize(.small)
                     Text("Waiting for System Settings…").foregroundStyle(.secondary)
                     Spacer()
-                    Button("Open System Settings") { controller.openProfileSettings() }
-                    Button("Cancel", role: .cancel) { controller.cancelFlow() }
-                        .keyboardShortcut(.cancelAction)
+                    flowButtons
                 } else {
                     ProgressView().controlSize(.small)
                     Spacer()
                 }
+            }
+        }
+    }
+
+    private var flowButtons: some View {
+        HStack(spacing: 10) {
+            BasicButton("Open System Settings", prominence: .secondary, size: .regular) {
+                controller.openProfileSettings()
+            }
+            BasicButton(
+                "Cancel", role: .cancel, prominence: .secondary, size: .regular, keyboardShortcut: .cancelAction
+            ) {
+                controller.cancelFlow()
             }
         }
     }
@@ -77,9 +88,7 @@ struct AIFlowSheet: View {
                 ProgressView().controlSize(.small)
                 Text("Waiting for System Settings…").foregroundStyle(.secondary)
                 Spacer()
-                Button("Open System Settings") { controller.openProfileSettings() }
-                Button("Cancel", role: .cancel) { controller.cancelFlow() }
-                    .keyboardShortcut(.cancelAction)
+                flowButtons
             }
         }
     }
@@ -143,9 +152,7 @@ private struct AIReportView: View {
             }
             HStack {
                 Spacer()
-                Button("Done") { controller.dismissReport() }
-                    .buttonStyle(.borderedProminent)
-                    .keyboardShortcut(.defaultAction)
+                BasicButton("Done", keyboardShortcut: .defaultAction) { controller.dismissReport() }
             }
         }
     }
