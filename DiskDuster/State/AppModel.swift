@@ -46,6 +46,7 @@ final class AppModel {
     private(set) var volume = VolumeInfo.forHomeVolume()
     private(set) var lastScanDate: Date?
     var isConfirmingClean = false
+    var isShowingAbout = false
     var report: CleanReport?
     private var work: Task<Void, Never>?
 

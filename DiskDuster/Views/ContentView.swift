@@ -35,6 +35,10 @@ struct ContentView: View {
         .sheet(item: $model.report) { report in
             CleanReportSheet(report: report)
         }
+        .sheet(isPresented: $model.isShowingAbout) {
+            AboutView { model.isShowingAbout = false }
+                .interactiveDismissDisabled()
+        }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             if !model.isBusy { model.refreshSystemState() }
         }
@@ -61,6 +65,7 @@ struct ContentView: View {
             }
         }
         if defaults.bool(forKey: "DDAutoScan") { model.startScan() }
+        if defaults.bool(forKey: "DDShowAbout") { model.isShowingAbout = true }
         // Opens the confirmation sheet once the scan finishes. It never cleans by itself.
         if defaults.bool(forKey: "DDShowConfirm") {
             Task {

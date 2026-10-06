@@ -19,11 +19,25 @@
 /* Begin PBXFileReference section */
 		D5D5D5D50000000000000004 /* DiskDuster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DiskDuster.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5D5D5D50000000000000005 /* DiskDusterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DiskDusterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5D5D5D50000000000000050 /* DiskDuster/Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DiskDuster/Version.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D5D5D5D50000000000000051 /* Exceptions for "DiskDuster" folder in "DiskDuster" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Version.xcconfig,
+			);
+			target = D5D5D5D50000000000000010 /* DiskDuster */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D5D5D5D50000000000000006 /* DiskDuster */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D5D5D5D50000000000000051 /* Exceptions for "DiskDuster" folder in "DiskDuster" target */,
+			);
 			path = DiskDuster;
 			sourceTree = "<group>";
 		};
@@ -57,6 +71,7 @@
 			children = (
 				D5D5D5D50000000000000006 /* DiskDuster */,
 				D5D5D5D50000000000000007 /* DiskDusterTests */,
+				D5D5D5D50000000000000050 /* DiskDuster/Version.xcconfig */,
 				D5D5D5D50000000000000003 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -326,12 +341,12 @@
 		};
 		D5D5D5D50000000000000034 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D5D5D5D50000000000000050 /* DiskDuster/Version.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 86G4NP75W9;
 				ENABLE_APP_SANDBOX = NO;
@@ -340,13 +355,11 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = DiskDuster;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Centennial OSS";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.centennialoss.diskduster;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -361,12 +374,12 @@
 		};
 		D5D5D5D50000000000000035 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D5D5D5D50000000000000050 /* DiskDuster/Version.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 86G4NP75W9;
 				ENABLE_APP_SANDBOX = NO;
@@ -375,13 +388,11 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = DiskDuster;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Centennial OSS";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.centennialoss.diskduster;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

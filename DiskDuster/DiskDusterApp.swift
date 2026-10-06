@@ -27,6 +27,9 @@ struct DiskDusterApp: App {
                 .frame(minWidth: 900, minHeight: 580)
         }
         .commands {
+            CommandGroup(replacing: .appInfo) {
+                Button("About \(AppIdentifier.name)") { model.isShowingAbout = true }
+            }
             CommandGroup(replacing: .newItem) {}
             CommandGroup(after: .newItem) {
                 Button("Scan") { model.startScan() }
