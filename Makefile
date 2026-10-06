@@ -1,4 +1,4 @@
-.PHONY: build build-macos build-release-unsigned clean lint lint-fix-safe reset-defaults reset-perms test
+.PHONY: build build-macos build-release-unsigned build-run-macos clean lint lint-fix-safe reset-defaults reset-perms run-macos test
 
 # SwiftLint: https://github.com/realm/SwiftLint - `brew install swiftlint`
 SWIFTLINT ?= $(shell command -v swiftlint 2>/dev/null)
@@ -43,6 +43,13 @@ build-macos:
 	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration Debug -derivedDataPath $(DERIVED_DATA) -destination 'platform=macOS' build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
 	rm -rf "build/$(APP_NAME).app"
 	cp -R "$(DERIVED_DATA)/Build/Products/Debug/$(APP_NAME).app" build/
+
+# Open the Debug app built by build-macos.
+run-macos:
+	open "build/$(APP_NAME).app"
+
+# Build the Debug app, then open it if the build succeeded.
+build-run-macos: build-macos run-macos
 
 build-release-unsigned:
 	mkdir -p dist

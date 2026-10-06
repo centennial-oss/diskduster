@@ -95,26 +95,6 @@ struct FullDiskAccessCard: View {
     }
 }
 
-/// Free-space gauge for the startup volume.
-struct DiskUsageView: View {
-    @Environment(AppModel.self) private var model
-
-    var body: some View {
-        if let volume = model.volume {
-            VStack(alignment: .leading, spacing: 6) {
-                Label(volume.name, systemImage: "internaldrive")
-                    .font(.callout.weight(.medium))
-                ProgressView(value: volume.usedFraction)
-                    .tint(volume.usedFraction > 0.9 ? .red : .accentColor)
-                Text("\(ByteFormat.string(volume.availableBytes)) available of \(ByteFormat.string(volume.totalBytes))")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
-            }
-        }
-    }
-}
-
 /// A scope picker in the style of Apple Music's search scopes: one Liquid Glass capsule holding plain-text
 /// options, with a softer capsule that slides behind the chosen one.
 struct GlassSegmentedControl<Value: Hashable & Sendable>: View {

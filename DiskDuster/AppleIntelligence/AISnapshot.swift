@@ -58,7 +58,7 @@ nonisolated struct AISnapshot: Sendable {
 
     static func captureNow() -> AISnapshot {
         var snapshot = AISnapshot()
-        snapshot.isSupported = isAppleSilicon && AssetService.isAvailable
+        snapshot.isSupported = isPlatformSupported && AssetService.isAvailable
         snapshot.profileFeatures = AIProfile.installedFeatures()
         if snapshot.isSupported {
             snapshot.packBytes = readPackSizes()
@@ -67,6 +67,19 @@ nonisolated struct AISnapshot: Sendable {
             snapshot.states[feature] = state(of: feature, in: snapshot)
         }
         return snapshot
+    }
+
+    /// macOS 26 and earlier have a single Apple Intelligence switch in System Settings, so DiskDuster only
+    /// offers these controls on macOS 27 and later.
+    static let minimumMajorVersion = 27
+
+    static func supportsOS(majorVersion: Int) -> Bool {
+        majorVersion >= minimumMajorVersion
+    }
+
+    /// Apple Intelligence needs Apple silicon, and DiskDuster's controls need macOS 27 or later.
+    static var isPlatformSupported: Bool {
+        isAppleSilicon && supportsOS(majorVersion: ProcessInfo.processInfo.operatingSystemVersion.majorVersion)
     }
 
     static var isAppleSilicon: Bool {

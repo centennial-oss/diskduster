@@ -39,12 +39,18 @@ struct WelcomeView: View {
                         model.startScan()
                     }
 
-                    Toggle("Include system locations", isOn: $settings.includeSystemLocations)
-                        .toggleStyle(.roundedCheckbox)
-                    Text("Cleaning system items asks for an administrator password. "
-                        + "Leave this off to stay in your home folder.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: 4) {
+                        LabeledSwitch(title: "Include system locations", isOn: $settings.includeSystemLocations)
+                        Text("Cleaning system items asks for an administrator password. "
+                            + "Leave this off to stay in your home folder.")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                    }
+                    .padding(14)
+                    .frame(maxWidth: 480)
+                    .glassEffect(.regular, in: .rect(cornerRadius: 12))
+                    .padding(.top, 6)
                 }
 
                 VStack(alignment: .leading, spacing: 10) {

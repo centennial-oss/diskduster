@@ -44,16 +44,24 @@ nonisolated enum AIProfile {
             payloads.append(restrictions)
         }
 
+        // One managed-preferences payload per domain. macOS 27 dropped every domain when they shared a single
+        // payload, so each gets its own, with DiskDuster's marker first.
         var pinned = pinnedValues(for: ordered)
         pinned[markerDomain] = [
             markerVersionKey: profileVersion,
             markerFeaturesKey: ordered.map(\.rawValue)
         ]
-        var managed = payloadHeader(type: "com.apple.ManagedClient.preferences", name: "Pinned settings")
-        managed["PayloadContent"] = pinned.mapValues { values in
-            ["Forced": [["mcx_preference_settings": values]]]
+        let domains = [markerDomain] + pinned.keys.filter { $0 != markerDomain }.sorted()
+        for domain in domains {
+            guard let values = pinned[domain] else { continue }
+            var managed = payloadHeader(
+                type: "com.apple.ManagedClient.preferences", name: "Pinned settings: \(domain)",
+                // ".GlobalPreferences" would otherwise put two dots in a row in the payload identifier.
+                suffix: domain.trimmingCharacters(in: CharacterSet(charactersIn: "."))
+            )
+            managed["PayloadContent"] = [domain: ["Forced": [["mcx_preference_settings": values]]]]
+            payloads.append(managed)
         }
-        payloads.append(managed)
 
         return [
             "PayloadType": "Configuration",
@@ -82,8 +90,8 @@ nonisolated enum AIProfile {
         return values
     }
 
-    private static func payloadHeader(type: String, name: String) -> [String: Any] {
-        let payloadID = "\(identifier).\(type)"
+    private static func payloadHeader(type: String, name: String, suffix: String? = nil) -> [String: Any] {
+        let payloadID = [identifier, type, suffix].compactMap { $0 }.joined(separator: ".")
         return [
             "PayloadType": type,
             "PayloadVersion": 1,

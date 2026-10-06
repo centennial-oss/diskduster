@@ -44,10 +44,9 @@ struct AppleIntelligenceView: View {
                 featureSection(snapshot)
                 modelSection(snapshot)
                 notes
-                actionBar
             }
             .padding(28)
-            .frame(maxWidth: 820)
+            .frame(maxWidth: 1040)
             .frame(maxWidth: .infinity)
         }
     }
@@ -103,15 +102,29 @@ struct AppleIntelligenceView: View {
                 }
                 BasicButton("None", prominence: .secondary, size: .small) { controller.selection = [] }
             }
-            VStack(spacing: 0) {
-                ForEach(AIFeature.allCases) { feature in
-                    featureRow(feature, state: snapshot.states[feature] ?? .unknown)
-                    if feature != AIFeature.allCases.last { Divider().padding(.leading, 44) }
+            // Two cards side by side when there's room; one long card when the window is narrow.
+            let features = AIFeature.allCases
+            let split = (features.count + 1) / 2
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .top, spacing: 16) {
+                    featureCard(Array(features[..<split]), snapshot)
+                    featureCard(Array(features[split...]), snapshot)
                 }
+                featureCard(features, snapshot)
             }
-            .padding(.vertical, 6)
-            .glassEffect(.regular, in: .rect(cornerRadius: 14))
         }
+    }
+
+    private func featureCard(_ features: [AIFeature], _ snapshot: AISnapshot) -> some View {
+        VStack(spacing: 0) {
+            ForEach(features) { feature in
+                featureRow(feature, state: snapshot.states[feature] ?? .unknown)
+                if feature != features.last { Divider().padding(.leading, 44) }
+            }
+        }
+        .padding(.vertical, 6)
+        .frame(minWidth: 400)
+        .glassEffect(.regular, in: .rect(cornerRadius: 14))
     }
 
     private func featureRow(_ feature: AIFeature, state: AIFeatureState) -> some View {
@@ -140,15 +153,11 @@ struct AppleIntelligenceView: View {
             Text("Downloaded Models").font(.title3.weight(.semibold))
             VStack(spacing: 0) {
                 ForEach(AIModelPack.allCases) { pack in
-                    HStack {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(pack.title)
-                            let status = packStatus(pack, bytes: snapshot.packBytes[pack], removing: removing)
-                            Text(status.text)
-                                .font(.callout)
-                                .foregroundStyle(status.highlighted ? AnyShapeStyle(.orange)
-                                                                    : AnyShapeStyle(.secondary))
-                        }
+                    HStack(spacing: 6) {
+                        let status = packStatus(pack, bytes: snapshot.packBytes[pack], removing: removing)
+                        Text(pack.title)
+                        Text("– \(status.text)")
+                            .foregroundStyle(status.highlighted ? AnyShapeStyle(.orange) : AnyShapeStyle(.secondary))
                         Spacer()
                         Text(sizeText(snapshot.packBytes[pack]))
                             .monospacedDigit()
@@ -166,13 +175,13 @@ struct AppleIntelligenceView: View {
 
     private func packStatus(_ pack: AIModelPack, bytes: Int64?, removing: Set<AIModelPack>)
         -> (text: String, highlighted: Bool) {
-        if bytes == 0 { return ("Nothing to remove", false) }
-        return removing.contains(pack) ? ("Will be removed", true) : (keptReason(pack), false)
+        if bytes == 0 { return ("nothing to remove", false) }
+        return removing.contains(pack) ? ("will be removed", true) : (keptReason(pack), false)
     }
 
     private func keptReason(_ pack: AIModelPack) -> String {
         let needed = pack.dependents.filter { !controller.selection.contains($0) }.map(\.title)
-        return needed.isEmpty ? "Kept" : "Kept for " + needed.formatted(.list(type: .and))
+        return needed.isEmpty ? "kept" : "kept for " + needed.formatted(.list(type: .and))
     }
 
     private func sizeText(_ bytes: Int64?) -> String {
@@ -182,7 +191,7 @@ struct AppleIntelligenceView: View {
 
     private var notes: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("macOS asks you to approve a profile in System Settings. This needs your password.",
+            Label("macOS asks you to approve a profile in System Settings with your password or biometrics.",
                   systemImage: "lock.shield")
             Label("The profile keeps removed models from downloading again. Remove it to undo everything.",
                   systemImage: "arrow.uturn.backward")
@@ -192,20 +201,6 @@ struct AppleIntelligenceView: View {
         }
         .font(.callout)
         .foregroundStyle(.secondary)
-    }
-
-    private var actionBar: some View {
-        HStack {
-            Spacer()
-            BasicButton(actionTitle, systemImage: "apple.intelligence") { controller.turnOff() }
-                .disabled(controller.selection.isEmpty || controller.isBusy)
-        }
-    }
-
-    private var actionTitle: String {
-        let count = controller.selection.count
-        let base = "Turn Off \(count) \(count == 1 ? "Feature" : "Features")"
-        return controller.bytesToFree > 0 ? "\(base) and Remove \(ByteFormat.string(controller.bytesToFree))" : base
     }
 }
 

@@ -63,18 +63,43 @@ nonisolated enum AIModelRemover {
             }
         }
 
+        var requestErrors: [AIModelPack: String] = [:]
         for (index, pack) in targets.enumerated() {
+            // Removing one pack can take others with it (the language models do), so skip packs already gone.
+            if AISnapshot.readPackSizes()[pack] == 0 { continue }
             await progress("Removing \(pack.title) (\(index + 1) of \(targets.count))…")
             do {
                 try await AssetService.removeDownloadedFiles(of: pack)
             } catch {
-                notes.append(AIPackNote(pack: pack, message: error.localizedDescription))
+                requestErrors[pack] = error.localizedDescription
             }
         }
 
         await progress("Confirming the models are gone…")
         let after = await waitForRemoval(of: targets)
-        return summarize(packs: packs, targets: targets, before: before, after: after, notes: notes)
+        notes += outcomeNotes(targets: targets, after: after, requestErrors: requestErrors)
+        return summarize(packs: packs, before: before, after: after, notes: notes)
+    }
+
+    /// Judges each pack by what's left on disk, not by the service's reply: a request the service refused
+    /// because the pack was already gone isn't a failure.
+    static func outcomeNotes(
+        targets: [AIModelPack],
+        after: [AIModelPack: Int64],
+        requestErrors: [AIModelPack: String]
+    ) -> [AIPackNote] {
+        targets.compactMap { pack in
+            let detail = requestErrors[pack].map { " \($0)" } ?? ""
+            switch after[pack] {
+            case .some(0):
+                return nil
+            case .some(let left):
+                let size = left.formatted(.byteCount(style: .file))
+                return AIPackNote(pack: pack, message: "\(size) is still on disk.\(detail)")
+            case .none:
+                return AIPackNote(pack: pack, message: "Removal couldn't be confirmed.\(detail)")
+            }
+        }
     }
 
     /// The inventory can lag behind the request, so poll for a short while before reporting.
@@ -91,7 +116,6 @@ nonisolated enum AIModelRemover {
 
     private static func summarize(
         packs: [AIModelPack],
-        targets: [AIModelPack],
         before: [AIModelPack: Int64],
         after: [AIModelPack: Int64],
         notes: [AIPackNote]
@@ -100,21 +124,11 @@ nonisolated enum AIModelRemover {
             let known = packs.compactMap { sizes[$0] }
             return known.count == packs.count ? known.reduce(0, +) : nil
         }
-        var allNotes = notes
-        for pack in targets {
-            if let left = after[pack], left > 0 {
-                let size = left.formatted(.byteCount(style: .file))
-                allNotes.append(AIPackNote(pack: pack, message: "\(size) is still on disk."))
-            } else if after[pack] == nil {
-                allNotes.append(AIPackNote(pack: pack, message: "Removal couldn't be confirmed."))
-            }
-        }
-        let complete = allNotes.isEmpty
         return AIRunReport(
-            outcome: complete ? .finished : .incomplete,
+            outcome: notes.isEmpty ? .finished : .incomplete,
             bytesBefore: total(before),
             bytesAfter: total(after),
-            notes: allNotes
+            notes: notes
         )
     }
 }

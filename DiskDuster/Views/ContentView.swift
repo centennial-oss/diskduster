@@ -11,11 +11,13 @@ enum SidebarItem: Hashable {
     case apps
     case category(CleanupCategory)
     case appleIntelligence
+    case snapshots
 }
 
 struct ContentView: View {
     @Environment(AppModel.self) private var model
     @Environment(AppleIntelligenceController.self) private var intelligence
+    @Environment(SnapshotsController.self) private var snapshots
     @State private var sidebarSelection: SidebarItem? = .overview
 
     var body: some View {
@@ -36,7 +38,10 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             if !model.isBusy { model.refreshSystemState() }
         }
-        .task { intelligence.refresh() }
+        .task {
+            intelligence.refresh()
+            snapshots.refresh()
+        }
         #if DEBUG
         .task { applyDebugLaunchArguments() }
         #endif
@@ -51,6 +56,7 @@ struct ContentView: View {
             switch raw {
             case "apps": sidebarSelection = .apps
             case "appleIntelligence": sidebarSelection = .appleIntelligence
+            case "snapshots": sidebarSelection = .snapshots
             default: sidebarSelection = CleanupCategory(rawValue: raw).map { .category($0) }
             }
         }
@@ -69,8 +75,10 @@ struct ContentView: View {
     private var detail: some View {
         switch model.phase {
         case .idle where sidebarSelection == .appleIntelligence:
-            // Apple Intelligence doesn't depend on a scan, so it's available right away.
+            // The tools don't depend on a scan, so they're available right away.
             AppleIntelligenceView()
+        case .idle where sidebarSelection == .snapshots:
+            SnapshotsView()
         case .idle:
             WelcomeView()
         case .scanning(let progress):
@@ -90,6 +98,8 @@ struct ContentView: View {
                 AppsView()
             case .appleIntelligence:
                 AppleIntelligenceView()
+            case .snapshots:
+                SnapshotsView()
             case .overview, nil:
                 OverviewView { sidebarSelection = .category($0) }
             }
@@ -100,36 +110,72 @@ struct ContentView: View {
         model.selectedBytes > 0 ? "Clean \(ByteFormat.string(model.selectedBytes))" : "Clean"
     }
 
+    private var showsAppleIntelligence: Bool {
+        sidebarSelection == .appleIntelligence && intelligence.isPlatformSupported
+    }
+
+    private var showsSnapshots: Bool { sidebarSelection == .snapshots }
+
+    /// The toolbar acts on whatever the window is showing: each tool gets its own rescan and main action, and
+    /// the disk clean is everywhere else, so the main action is never below the fold.
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
-            Button {
-                model.startScan()
-            } label: {
-                Label(model.lastScanDate == nil ? "Scan" : "Rescan", systemImage: "arrow.clockwise")
+            if showsAppleIntelligence {
+                rescanButton(help: "Check Apple Intelligence again") { intelligence.refresh() }
+                    .disabled(intelligence.isBusy || intelligence.isRefreshing)
+            } else if showsSnapshots {
+                rescanButton(help: "Look for Time Machine snapshots again") { snapshots.refresh() }
+                    .disabled(snapshots.isBusy)
+            } else {
+                rescanButton(title: model.lastScanDate == nil ? "Scan" : "Rescan",
+                             help: "Scan for reclaimable files (⌘R)") { model.startScan() }
+                    .disabled(model.isBusy)
             }
-            .help("Scan for reclaimable files (⌘R)")
-            .disabled(model.isBusy)
         }
         ToolbarSpacer(.fixed, placement: .primaryAction)
         ToolbarItem(placement: .primaryAction) {
-            Button {
-                model.requestClean()
-            } label: {
-                Label(cleanTitle, systemImage: "sparkles")
-                    .labelStyle(.titleAndIcon)
-                    .padding(.horizontal, 10)
+            if showsAppleIntelligence {
+                mainButton(intelligence.actionTitle, symbol: intelligence.actionSymbol,
+                           help: intelligence.actionHelp) { intelligence.performPrimaryAction() }
+                    .disabled(!intelligence.canPerformPrimaryAction)
+            } else if showsSnapshots {
+                mainButton(snapshots.actionTitle, symbol: "trash",
+                           help: "Delete the selected Time Machine snapshots") { snapshots.requestDelete() }
+                    .disabled(!snapshots.canDelete)
+            } else {
+                mainButton(cleanTitle, symbol: "sparkles",
+                           help: "Review and clean the selected items") { model.requestClean() }
+                    .disabled(model.isBusy || model.selectedItems.isEmpty)
             }
-            .buttonStyle(.borderedProminent)
-            .help("Review and clean the selected items")
-            .disabled(model.isBusy || model.selectedItems.isEmpty)
         }
+    }
+
+    private func rescanButton(title: String = "Rescan", help: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: "arrow.clockwise")
+                .labelStyle(.titleAndIcon)
+                .padding(.horizontal, 6)
+        }
+        .help(help)
+    }
+
+    private func mainButton(_ title: String, symbol: String, help: String, action: @escaping () -> Void)
+        -> some View {
+        Button(action: action) {
+            Label(title, systemImage: symbol)
+                .labelStyle(.titleAndIcon)
+                .padding(.horizontal, 10)
+        }
+        .buttonStyle(.borderedProminent)
+        .help(help)
     }
 }
 
 struct SidebarView: View {
     @Environment(AppModel.self) private var model
     @Environment(AppleIntelligenceController.self) private var intelligence
+    @Environment(SnapshotsController.self) private var snapshots
     @Binding var selection: SidebarItem?
 
     var body: some View {
@@ -167,8 +213,8 @@ struct SidebarView: View {
                     .selectionDisabled(!hasResults)
                 }
             }
-            if intelligence.isPlatformSupported {
-                Section("Tools") {
+            Section("Tools") {
+                if intelligence.isPlatformSupported {
                     HStack {
                         Label("Apple Intelligence", systemImage: "apple.intelligence")
                         Spacer()
@@ -179,6 +225,17 @@ struct SidebarView: View {
                     }
                     .tag(SidebarItem.appleIntelligence)
                 }
+                HStack {
+                    Label("Time Machine Snapshots", systemImage: "clock.arrow.circlepath")
+                    Spacer()
+                    if snapshots.hasLoaded {
+                        Text("\(snapshots.snapshots.count)")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                    }
+                }
+                .tag(SidebarItem.snapshots)
             }
         }
         .disabled(model.isBusy)

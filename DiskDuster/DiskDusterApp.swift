@@ -11,6 +11,7 @@ struct DiskDusterApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var model: AppModel
     @State private var intelligence = AppleIntelligenceController()
+    @State private var snapshots = SnapshotsController()
 
     init() {
         _model = State(initialValue: AppModel(settings: AppSettings()))
@@ -22,6 +23,7 @@ struct DiskDusterApp: App {
                 .environment(model)
                 .environment(model.settings)
                 .environment(intelligence)
+                .environment(snapshots)
                 .frame(minWidth: 900, minHeight: 580)
         }
         .commands {

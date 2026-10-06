@@ -85,12 +85,11 @@ struct BasicButton: View {
         context.backgroundColor ?? (context.role == .destructive ? .red : .accentColor)
     }
 
-    private var labelColor: Color {
+    /// Primary buttons let the system pick the label color: a fixed color becomes unreadable when the window is
+    /// inactive and macOS greys out the button.
+    private var labelColor: Color? {
         if let foregroundColor = context.foregroundColor { return foregroundColor }
-        switch context.prominence {
-        case .primary: return Color(nsColor: .windowBackgroundColor)
-        case .secondary: return .primary
-        }
+        return context.prominence == .secondary ? .primary : nil
     }
 
     private var labelFont: Font {
@@ -113,7 +112,7 @@ struct BasicButton: View {
         }
         .font(labelFont)
         .padding(.horizontal, context.size == .small || context.size == .mini ? 2 : 6)
-        .foregroundStyle(labelColor)
+        .foregroundStyle(labelColor.map { AnyShapeStyle($0) } ?? AnyShapeStyle(.foreground))
     }
 
     @ViewBuilder

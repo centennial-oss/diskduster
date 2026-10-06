@@ -73,7 +73,7 @@ nonisolated struct Cleaner: Sendable {
         }
 
         if !adminItems.isEmpty {
-            await progress("Waiting for administrator password…")
+            await progress("Waiting for your administrator password…")
             await removeAdminItems(adminItems, into: &outcome)
         }
         return outcome

@@ -53,40 +53,23 @@ nonisolated enum PrivilegedRemover {
 nonisolated struct OsascriptRunner: PrivilegedRunning {
     func run(shellScript: String, prompt: String) async throws(PrivilegedRunError) -> String {
         guard shellScript.utf8.count <= PrivilegedRemover.maxScriptBytes else { throw .tooLarge }
-        let process = Process()
-        process.executableURL = URL(filePath: "/usr/bin/osascript")
-        process.arguments = [
+        let arguments = [
             "-e", "on run argv",
             "-e", "do shell script (item 1 of argv) with prompt (item 2 of argv) with administrator privileges",
             "-e", "end run",
             shellScript, prompt
         ]
-        let output = Pipe()
-        let errors = Pipe()
-        process.standardOutput = output
-        process.standardError = errors
+        let result: ProcessResult
         do {
-            try process.run()
+            result = try await ProcessRunner.run("/usr/bin/osascript", arguments)
         } catch {
             throw .failed(error.localizedDescription)
         }
-        let (status, stdout, stderr) = await withCheckedContinuation { continuation in
-            DispatchQueue.global(qos: .userInitiated).async {
-                let outData = output.fileHandleForReading.readDataToEndOfFile()
-                let errData = errors.fileHandleForReading.readDataToEndOfFile()
-                process.waitUntilExit()
-                continuation.resume(returning: (
-                    process.terminationStatus,
-                    String(bytes: outData, encoding: .utf8) ?? "",
-                    String(bytes: errData, encoding: .utf8) ?? ""
-                ))
-            }
-        }
-        guard status == 0 else {
+        guard result.status == 0 else {
             // -128 is AppleScript's "User canceled."
-            if stderr.contains("-128") { throw .cancelled }
-            throw .failed(stderr.trimmingCharacters(in: .whitespacesAndNewlines))
+            if result.errorOutput.contains("-128") { throw .cancelled }
+            throw .failed(result.errorOutput.trimmingCharacters(in: .whitespacesAndNewlines))
         }
-        return stdout
+        return result.output
     }
 }

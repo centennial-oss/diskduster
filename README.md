@@ -16,14 +16,14 @@ DiskDuster is distributed through [this project's releases](https://github.com/c
 - **System locations are optional** — Cleaning system items asks for an administrator password once per clean. If none are selected, or system locations are turned off, DiskDuster never asks.
 - **Always Ignore** — Right-click any item to skip it in future scans.
 - **Preserve apps** — Keep everything an app owns, in every category, with one switch in the Apps view.
-- **Apple Intelligence controls** — On Apple silicon, turn off the Apple Intelligence features you don't use and remove the models they downloaded (about 16 GB on a typical Mac). Fully reversible.
+- **Apple Intelligence controls** — On Apple silicon Macs running macOS 27 or later, turn off the Apple Intelligence features you don't use and remove the models they downloaded (about 16 GB on a typical Mac). Fully reversible.
 
 ## Apple Intelligence
 
-macOS has no single switch for Apple Intelligence, and its models stay on disk after features are turned off. DiskDuster can turn off the features you choose and remove their models, without touching `/System` directly:
+Starting with macOS 27, there is no single switch for Apple Intelligence, and its models stay on disk after features are turned off. (On macOS 26, use the Apple Intelligence switch in System Settings instead; DiskDuster hides this screen there.) DiskDuster can turn off the features you choose and remove their models, without touching `/System` directly:
 
 1. DiskDuster creates a configuration profile that uses Apple's restriction keys and managed preferences to switch the chosen features off. It also stops macOS from downloading the removed models again.
-2. You approve the profile in **System Settings → General → Device Management**. macOS requires this step and asks for your password.
+2. You approve the profile in **System Settings → General → Device Management**. macOS requires this step and asks you to approve it with your password or biometrics.
 3. Once the profile is installed, DiskDuster asks Apple's own asset service to remove the models that no remaining feature needs. If macOS reports a model differently than expected, DiskDuster leaves it alone.
 
 To undo everything, choose **Turn Everything Back On** in DiskDuster, or remove the "DiskDuster: Apple Intelligence Off" profile in System Settings. macOS downloads models again when a feature needs them. Dictation and other speech features aren't affected.

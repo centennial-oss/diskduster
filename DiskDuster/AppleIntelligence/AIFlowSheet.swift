@@ -35,7 +35,9 @@ struct AIFlowSheet: View {
             StepRow(
                 number: 1,
                 title: "Install the profile in System Settings",
-                detail: "Double-click “\(AIProfile.displayName)”, click Install, then enter your password.",
+                detail: "Click Open System Settings, double-click “\(AIProfile.displayName)”, click Install, then "
+                    + "approve with your password or biometrics. macOS may then say Apple Intelligence isn't "
+                    + "available. That's expected.",
                 status: message == nil ? .active : .done
             )
             StepRow(
@@ -60,7 +62,7 @@ struct AIFlowSheet: View {
 
     private var flowButtons: some View {
         HStack(spacing: 10) {
-            BasicButton("Open System Settings", prominence: .secondary, size: .regular) {
+            BasicButton("Open System Settings", systemImage: "gear", size: .regular) {
                 controller.openProfileSettings()
             }
             BasicButton(
@@ -78,7 +80,8 @@ struct AIFlowSheet: View {
             StepRow(
                 number: 1,
                 title: "Remove the profile in System Settings",
-                detail: "Select “\(AIProfile.displayName)”, click the minus (−) button, then enter your password.",
+                detail: "Click Open System Settings, select “\(AIProfile.displayName)”, click the minus (−) button, "
+                    + "then approve with your password or biometrics.",
                 status: .active
             )
             Text("Your previous settings come back right away. macOS downloads models again when a feature needs them.")
