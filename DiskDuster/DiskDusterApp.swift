@@ -2,36 +2,55 @@
 //  DiskDusterApp.swift
 //  DiskDuster
 //
-//  Created by James Ranson on 12/17/20.
-//
 
+import AppKit
 import SwiftUI
 
 @main
 struct DiskDusterApp: App {
-    //@StateObject private var modelData = ModelData()
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @State private var model: AppModel
+    @State private var intelligence = AppleIntelligenceController()
+    @State private var snapshots = SnapshotsController()
+
+    init() {
+        _model = State(initialValue: AppModel(settings: AppSettings()))
+    }
 
     var body: some Scene {
-        let mainWindow = WindowGroup {
+        Window("DiskDuster", id: "main") {
             ContentView()
-        //        .environmentObject(modelData)
+                .environment(model)
+                .environment(model.settings)
+                .environment(intelligence)
+                .environment(snapshots)
+                .frame(minWidth: 900, minHeight: 580)
+        }
+        .commands {
+            CommandGroup(replacing: .appInfo) {
+                Button("About \(AppIdentifier.name)") { model.isShowingAbout = true }
+            }
+            CommandGroup(replacing: .newItem) {}
+            CommandGroup(after: .newItem) {
+                Button("Scan") { model.startScan() }
+                    .keyboardShortcut("r")
+                    .disabled(model.isBusy)
+                Button("Clean Selected…") { model.requestClean() }
+                    .keyboardShortcut(.delete, modifiers: [.command, .shift])
+                    .disabled(model.isBusy || model.selectedItems.isEmpty)
+            }
         }
 
-        #if os(macOS)
-        mainWindow
-//            .commands {
-//                DiskDusterCommands()
-//            }
-        #else
-        mainWindow
-        #endif
-        
-
-        #if os(macOS)
-//        Settings {
-//            DiskDusterSettings()
-//        }
-        #endif
+        Settings {
+            SettingsView()
+                .environment(model)
+                .environment(model.settings)
+        }
     }
 }
 
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        true
+    }
+}
