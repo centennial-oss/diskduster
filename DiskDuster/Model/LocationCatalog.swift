@@ -18,12 +18,15 @@ nonisolated enum LocationCatalog {
         all.first { $0.id == id }
     }
 
-    /// Child names that are never offered for cleaning, because deleting them forces iCloud to resync or
-    /// because they belong to DiskDuster itself.
+    /// Child names that are never offered for cleaning: deleting them forces iCloud to resync, they belong to
+    /// DiskDuster itself, or (the macOS per-user caches) a background service keeps files in them open, so once
+    /// they're in the Trash it can't be emptied until you restart.
     static let protectedNames: Set<String> = [
         "CloudKit",
         "com.apple.bird",
         "com.apple.cloudd",
+        "com.apple.quicklook.ThumbnailsAgent",
+        "com.apple.WorkflowKit.BackgroundShortcutRunner",
         "org.centennialoss.diskduster"
     ]
 

@@ -71,6 +71,22 @@ struct ScanningTests {
         #expect(result.skippedLocations.map(\.id) == ["~/.Trash"])
     }
 
+    /// Background services keep files open in these, so trashing them leaves a Trash that can't be emptied.
+    @Test func perUserCacheSkipsFoldersInUseByMacOS() async throws {
+        let home = try TempHome()
+        defer { home.remove() }
+        let darwinCache = try home.makeDirectory("var/C")
+        try home.makeFile("var/C/com.example.app/a.bin")
+        try home.makeFile("var/C/com.apple.quicklook.ThumbnailsAgent/b.bin")
+        try home.makeFile("var/C/com.apple.WorkflowKit.BackgroundShortcutRunner/c.bin")
+        let environment = ScanEnvironment(
+            homePath: home.path, darwinCachePath: darwinCache, hasFullDiskAccess: true, ignoredPaths: []
+        )
+        let scanner = Scanner(locations: [location(ScanLocation.darwinCacheToken)], environment: environment)
+        let result = await scanner.scan { _ in }
+        #expect(result.items.map(\.ownerName) == ["com.example.app"])
+    }
+
     @Test func catalogNeverTargetsAppBundlesOrSimulators() {
         for entry in LocationCatalog.all {
             #expect(!entry.pattern.hasPrefix("/Applications"))
