@@ -113,6 +113,7 @@ struct BasicButton: View {
         .font(labelFont)
         .padding(.horizontal, context.size == .small || context.size == .mini ? 2 : 6)
         .foregroundStyle(labelColor.map { AnyShapeStyle($0) } ?? AnyShapeStyle(.foreground))
+        .modifier(ProminentLabelColor(isProminent: context.prominence == .primary && labelColor == nil))
     }
 
     @ViewBuilder
@@ -128,6 +129,24 @@ struct BasicButton: View {
                 .buttonStyle(.glass)
                 .tint(context.backgroundColor)
                 .controlSize(context.size)
+        }
+    }
+}
+
+/// Keeps the label of a filled (prominent) button readable while it's disabled. macOS draws disabled labels in a
+/// dark gray, which disappears on the dark violet accent in light mode, so a disabled label is a faded white
+/// instead. In an inactive window macOS greys the whole button, so the system color is left alone there.
+struct ProminentLabelColor: ViewModifier {
+    var isProminent = true
+
+    @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.appearsActive) private var appearsActive
+
+    func body(content: Content) -> some View {
+        if isProminent && !isEnabled && appearsActive {
+            content.foregroundStyle(.white.opacity(0.55))
+        } else {
+            content
         }
     }
 }

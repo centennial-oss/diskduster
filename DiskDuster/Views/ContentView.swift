@@ -171,6 +171,7 @@ struct ContentView: View {
             Label(title, systemImage: symbol)
                 .labelStyle(.titleAndIcon)
                 .padding(.horizontal, 10)
+                .modifier(ProminentLabelColor())
         }
         .buttonStyle(.borderedProminent)
         .help(help)
